@@ -28,6 +28,7 @@ class SocketHandler(object):
         self.queue_size = os.getenv('BOLT_SERVER_CONNECTION_WAIT_QUEUE', 100)
         self.listen = True
         self.thread_pool = []
+        self.__setup_socket_server()
 
     def __setup_socket_server(self):
         """Setup the socket server to handle the connection requests."""
@@ -35,8 +36,9 @@ class SocketHandler(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind((self.host, self.port))
         self.socket.listen(self.queue_size)
+        self.__start_listner()
 
-    def __start_lister(self):
+    def __start_listner(self):
         """Start listening for the client connections
 
         Starts accepting the connections on the port and assigns them to client
