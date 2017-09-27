@@ -71,6 +71,8 @@ class SocketHandler(object):
 
         while self.listen:
             message = conn.recv(32000)
+            if not message:
+                break
             self.handle(message)
 
     def handle(self, message):
@@ -86,3 +88,26 @@ class SocketHandler(object):
         """Stop listening on the server so as to prepare for shutdown"""
 
         self.listen = False
+
+    def send_message(self, topic, message):
+        """Send a new message to the clients subscribed to a particular topic
+
+        Keyword arguments:
+        topic -- The topic to which the message should be sent
+        message -- The JSON formatted message that needs to be sent
+
+        Raises:
+            RuntimeError if the specified topic doesn't exis
+        """
+
+        if not self.client_list.is_topic(topic):
+            raise RuntimeError("The specified topic doesn't exist")
+        for client in self.client_list.get_clients(topic):
+            client.sendall(message)
+
+    def broadcast(self, message):
+        """Broadcast a message to all the connected clients"""
+
+        for topic in self.client_list.get_topics():
+            for client in self.client_list.get_clients(topic):
+                client.sendall(message)

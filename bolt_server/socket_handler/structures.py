@@ -85,6 +85,19 @@ class ClientList(object):
 
         return self.client_list[topic]
 
+    def is_topic(self, topic):
+        """Check if a topic is present in the client list or not
+
+        Keyword arguments:
+        topic -- The topic to be checked for presence
+
+        Returns: Bool
+        """
+
+        if topic in self.client_list.keys():
+            return True
+        return False
+
     def remove_client(self, client, topic=''):
         """Remove the provided client from the client list
 
