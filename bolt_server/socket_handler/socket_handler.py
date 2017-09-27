@@ -32,7 +32,9 @@ class SocketHandler(object):
         self.message_handler = handler
         self.listen = True
         self.thread_pool = []
-        self.__setup_socket_server()
+        self.server_thread = threading.Thread(target=self.__setup_socket_server)
+        self.server_thread.daemon = True
+        self.server_thread.start()
 
     def __setup_socket_server(self):
         """Setup the socket server to handle the connection requests."""
