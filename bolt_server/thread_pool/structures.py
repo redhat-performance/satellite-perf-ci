@@ -66,6 +66,19 @@ class ThreadPool(object):
 
         return self.thread_pool.keys()
 
+    def is_application(self, application_name):
+        """Check id the provided application exists or not
+
+        Keyword arguments:
+        application_name -- The name of the application to check for
+
+        Returns: Bool
+        """
+
+        if application_name not in self.thread_pool.keys():
+            return False
+        return True
+
     def get_threads(self, application_name):
         """Get the list of threads pertaining to the provided application name
 
@@ -83,3 +96,27 @@ class ThreadPool(object):
             raise RuntimeError("The mentioned application is not running any threads")
 
         return self.thread_pool[application_name]
+
+    def remove_application(self, application_name):
+        """Remove the application from the thread pool
+
+        Removes the application from the thread pool once all the threads are
+        killed in the application pool
+
+        Keyword arguments:
+        application_name -- The name of the application to remove from thread
+                            pool
+
+        Raises:
+            RuntimeError if there is a running thread
+        """
+
+        if application_name not in self.thread_pool.keys():
+            return False
+
+        for thread in self.thread_pool[application_name]:
+            if not thread.is_alive():
+                self.thread_pool[application_name].remove(thread)
+            else:
+                raise RuntimeError("Cannot remove an application with running threads")
+    
