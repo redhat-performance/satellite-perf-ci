@@ -42,39 +42,6 @@ class Message(object):
 
         self.messages[message_name] = message_structure
 
-    def add_value(self, message_name, key, value):
-        """Add a new value to the message key
-
-        Keyword arguments:
-        message_name -- The name of the message
-        key -- The key to be updated in the message structure
-        value -- The value to be allocated to the key
-
-        Raises:
-            KeyError when the message name is not present
-        """
-
-        if message_name not in self.messages.keys():
-            raise KeyError("The message type to update is not registered")
-
-        self.messages[message_name][key] = value
-
-    def reset_value(self, message_name, key):
-        """Reset the value for the provided key in the message_name
-
-        Keyword arguments:
-        message_name -- The name of the message to to be updated
-        key -- The key whose value should be reset
-
-        Raises:
-            KeyError if the message to be updated is not registered
-        """
-
-        if message_name not in self.messages.keys():
-            raise KeyError("The key to be updated was not found")
-
-        self.messages[message_name][key] = ''
-
     def get_message(self, message_name):
         """Get the message structure associated with the name
 
@@ -109,7 +76,8 @@ class Message(object):
         message_name -- The name of the message to be removed
         """
 
-        del self.messages[message_name]
+        if message_name in self.messages.keys():
+            del self.messages[message_name]
 
 class MessagePacket(object):
     """The message pakcet Structure for the Bolt Server
