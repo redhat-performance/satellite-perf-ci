@@ -137,4 +137,41 @@ class MessagePacket(object):
         Returns: JSON
         """
 
-        return json.dumps(self.message_packet)
+        return (self.message_digest, json.dumps(self.message_packet))
+
+class MessageQueue(self):
+    """We use a message queue to track the responses received for the message
+
+    Message Queue keeps a track of unique message identifiers along with the
+    response they they generate so as to decide what to do next
+    """
+
+    def __init__(self):
+        """Initialize the message queue"""
+
+        self.message_queue = {}
+
+    def queue(self, message_identifier):
+        """Queue a newly sent message
+
+        Keyword arguments:
+        message_identifier -- The unique identifier pertaining to message
+        """
+
+        self.message_queue[message_identifier] = 'Awaited'
+
+    def update_status(self, message_identifier, status):
+        """Update the status of a sent message
+
+        Keyword arguments:
+        message_identifier -- The identifier to update
+        status -- The new status of the message
+
+        Raises:
+            KeyError if the message is not present in the queue
+        """
+
+        if message_identifier not in self.message_queue.keys():
+            raise KeyError("Cannot update status for an inexistant message")
+
+        self.message_queue[message_identifier] = status
