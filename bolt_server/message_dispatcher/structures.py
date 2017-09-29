@@ -4,6 +4,8 @@ Description: Message dispatcher related structures
 Date: 29/09/2017
 Author: Saurabh Badhwar <sbadhwar@redhat.com>
 '''
+import hashlib
+import json
 
 class Message(object):
     """Structure for handling new message types.
@@ -108,3 +110,31 @@ class Message(object):
         """
 
         del self.messages[message_name]
+
+class MessagePacket(object):
+    """The message pakcet Structure for the Bolt Server
+
+    Encapsulates the message along with a unique recognizable id so as to manage
+    the message lifecycle
+
+    Message Packet: {
+        identifier: <unique_identifier>,
+        message: Message
+    }
+    """
+
+    def __init__(self, message):
+        """Initialize the Message Packet"""
+
+        self.message_packet = {}
+        self.message_digest = hashlib.sha256(message)
+        self.message_packet['id'] = self.message_digest
+        self.message_packet['payload'] = message
+
+    def get_packet(self):
+        """Get the JSON formatted packet which can be transmitted
+
+        Returns: JSON
+        """
+
+        return json.dumps(self.message_packet)
