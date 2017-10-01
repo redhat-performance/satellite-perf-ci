@@ -95,7 +95,7 @@ class MessagePacket(object):
         """Initialize the Message Packet"""
 
         self.message_packet = {}
-        self.message_digest = hashlib.sha256(message)
+        self.message_digest = hashlib.sha256(str(message)).hexdigest()
         self.message_packet['id'] = self.message_digest
         self.message_packet['payload'] = message
 
@@ -107,7 +107,7 @@ class MessagePacket(object):
 
         return (self.message_digest, json.dumps(self.message_packet))
 
-class MessageQueue(self):
+class MessageQueue(object):
     """We use a message queue to track the responses received for the message
 
     Message Queue keeps a track of unique message identifiers along with the

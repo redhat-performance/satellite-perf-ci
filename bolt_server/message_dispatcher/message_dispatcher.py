@@ -90,7 +90,7 @@ class MessageDispatcher(object):
                 self.message_queue.queue(mid)
         except RuntimeError:
             raise RuntimeError("Unable to send the message across the topics")
-            continue
+            pass
 
     def __get_message_structure(self, message_name):
         """Get the message structure
