@@ -27,7 +27,7 @@ class SocketHandler(object):
 
         self.client_list = ClientList()
         self.host = os.getenv('BOLT_SERVER_HOST', '127.0.0.1')
-        self.port = os.getenv('BOLT_SERVER_PORT', 5200)
+        self.port = int(os.getenv('BOLT_SERVER_PORT', 5200))
         self.queue_size = os.getenv('BOLT_SERVER_CONNECTION_WAIT_QUEUE', 100)
         self.message_handler = handler
         self.listen = True
