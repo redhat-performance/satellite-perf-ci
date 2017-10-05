@@ -67,7 +67,7 @@ class PluginLoader(object):
             tmp_path = os.path.join(path, folder)
             init_path = os.path.join(tmp_path, '__init__.py')
             if os.path.isdir(tmp_path) and os.path.exists(init_path):
-                modules.append(tmp_path)
+                modules.append(tmp_path.split(os.path.sep)[-1])
 
         return modules
 
@@ -82,11 +82,12 @@ class PluginLoader(object):
         """
 
         for module in modules:
-            load_data = __import__(module, fromlist=['*'])
+            import_name = 'bolt_modules.' + module
+            load_data = __import__(import_name, fromlist=['*'])
             name = load_data.__name__
             location = load_data.__file__
-            structure = load_data.structures.Message
-            main_class = load_data.name
+            structure = getattr(load_data, 'Message')
+            main_class = getattr(load_data, module)
             plugin = Plugin(name, location, structure, main_class)
             self.plugins[name] = plugin
 
@@ -111,7 +112,8 @@ class PluginLoader(object):
         Returns: Bool
         """
 
-        module = __import__(mod_name, fromlist=['*'])
+        import_name = 'bolt_modules.' + mod_name
+        module = __import__(import_name, fromlist=['*'])
         includes = dir(module)
         if 'Message' in includes and mod_name in includes:
             return True
