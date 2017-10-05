@@ -35,11 +35,10 @@ class PluginLoader(object):
             mods = self.__get_modules(path)
             module_list = module_list + mods
 
-        for module in module_list:
+        iter_list = module_list[:]
+        for module in iter_list:
             if not self.__validate_module(module):
-                error_list.append(module)
-
-        module_list = module_list - error_list
+                module_list.remove(module)
 
         self.__load_plugins(module_list)
 
@@ -72,7 +71,7 @@ class PluginLoader(object):
 
         return modules
 
-    def __load_modules(self, modules):
+    def __load_plugins(self, modules):
         """Load the modules as plugins
 
         Keyword arguments:
@@ -82,7 +81,14 @@ class PluginLoader(object):
             RuntimeError if some error occurs during module load
         """
 
-        
+        for module in modules:
+            load_data = __import__(module, fromlist=['*'])
+            name = load_data.__name__
+            location = load_data.__file__
+            structure = load_data.structures.Message
+            main_class = load_data.name
+            plugin = Plugin(name, location, structure, main_class)
+            self.plugins[name] = plugin
 
     def __validate_module(self, mod_name):
         """Validate if the provided plugin adheres to the specification or not
