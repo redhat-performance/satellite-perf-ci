@@ -84,12 +84,66 @@ class PluginLoader(object):
         for module in modules:
             import_name = 'bolt_modules.' + module
             load_data = __import__(import_name, fromlist=['*'])
-            name = load_data.__name__
+            name = module
             location = load_data.__file__
             structure = getattr(load_data, 'Message')
             main_class = getattr(load_data, module)
             plugin = Plugin(name, location, structure, main_class)
             self.plugins[name] = plugin
+
+    def get_plugin(self, name):
+        """Get the plugin provided its name
+
+        Keyword arguments:
+        name -- The name of the plugin to be retrieved
+
+        Raises:
+            KeyError if the plugin is not loaded
+
+        Returns:
+            Plugin
+        """
+
+        if name not in self.plugins.keys():
+            raise KeyError("The plugin is not installed/loaded")
+
+        return self.plugins[name]
+
+    def get_plugin_executor(self, name):
+        """Get the main executor for the plugin provided the name of the plugin
+
+        Keyword arguments:
+        name -- The name of the plugin to retrieve the executor for
+
+        Raises:
+            KeyError if the plugin is not loaded/installed
+
+        Returns:
+            Object
+        """
+
+        if name not in self.plugins.keys():
+            raise KeyError("The plugin is not loaded")
+
+        return self.plugins[name].get_executor()
+
+    def get_plugin_structure(self, name):
+        """Get the structure of the plugin provided the name
+
+        Keyword arguments:
+        name -- The name of the plugin to load the message of
+
+        Raises:
+            KeyError if the plugin is not loaded/installed
+
+        Returns:
+            Object
+        """
+
+        if name not in self.plugins.keys():
+            raise KeyError("Plugin is not loaded/installed")
+
+        return self.plugins[name].get_message_struct()
 
     def __validate_module(self, mod_name):
         """Validate if the provided plugin adheres to the specification or not
