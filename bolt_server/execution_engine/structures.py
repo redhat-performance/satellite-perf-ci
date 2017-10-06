@@ -93,7 +93,7 @@ class Request(object):
         self.message_params = params
         self.message_topics = topics
 
-    def get_message(self):
+    def get_request(self):
         """Get the Request object as a list
 
         Returns:
