@@ -81,3 +81,23 @@ class RequestQueue(object):
             raise KeyError("No such request in queue")
 
         self.request_queue[request] = status
+
+class Request(object):
+    """Request structure for the Execution Engine"""
+
+    def __init__(self, name, message_struct, params, topics):
+        """Initialize the request object and setup the parameters"""
+
+        self.message_name = name
+        self.message_struct = message_struct
+        self.message_params = params
+        self.message_topics = topics
+
+    def get_message(self):
+        """Get the Request object as a list
+
+        Returns:
+            List
+        """
+
+        return [self.message_name, self.message_struct, self.message_params, self.message_topics]
