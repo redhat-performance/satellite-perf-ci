@@ -33,6 +33,23 @@ class MessageDispatcher(object):
         #Initialize the Message Queue
         self.message_queue = MessageQueue()
 
+    def message_exists(self, message_name):
+        """Check if the message exists or not
+
+        Keyword arguments:
+        message_name -- The name of the message
+
+        Returns:
+            Bool
+        """
+
+        try:
+            self.message_store.get_message(message_name)
+        except RuntimeError:
+            return False
+
+        return True
+
     def register_message(self, message_name, message_structure, message_topics):
         """Register a new message
 
