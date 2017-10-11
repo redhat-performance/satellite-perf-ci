@@ -75,7 +75,7 @@ class TaskQueue(object):
 
         task = Task(task_name, task_struct, task_params, task_topics)
         task_id = task.get_task_id()
-        self.task_queue[task_id] = [self.TASK_QUEUED, task_dependency]
+        self.task_queue[task_id] = [task, self.TASK_QUEUED, task_dependency]
         return task_id
 
     def get_task(self, task_id):
@@ -128,8 +128,8 @@ class TaskQueue(object):
 
         if task_id not in self.task_queue.keys():
             raise KeyError("Task is not queued")
-            
-        return self.task_queue[task_id][1]
+
+        return self.task_queue[task_id][2]
 
     def change_task_status(self, task_id, task_status):
         """Change the status of the task
@@ -145,4 +145,4 @@ class TaskQueue(object):
         if task_id not in self.task_queue.keys():
             raise KeyError("The provided task is not present")
 
-        self.task_queue[task_id][0] = task_status
+        self.task_queue[task_id][1] = task_status
