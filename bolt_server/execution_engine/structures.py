@@ -114,6 +114,23 @@ class TaskQueue(object):
 
         return self.task_queue[task_id][1]
 
+    def get_task_dependency(self, task_id):
+        """Get the dependency list of the task
+
+        Keyword arguments:
+        task_id -- The id of the task to retrieve the dependency list for
+
+        Raises:
+            KeyError if the task_id is not queued
+        Returns:
+            List The dependencies for the given task
+        """
+
+        if task_id not in self.task_queue.keys():
+            raise KeyError("Task is not queued")
+            
+        return self.task_queue[task_id][1]
+
     def change_task_status(self, task_id, task_status):
         """Change the status of the task
 
