@@ -13,6 +13,8 @@ class ExecutionEngine(object):
     for the new tasks. The execution engine manages the order in which the tasks
     will be executed and is also responsible for updating their state in the
     task queue.
+
+    TODO: Add a multithreaded execution mechanism
     """
 
     def __init__(self, message_dispatcher, plguin_loader, execution_threads=3):
@@ -100,6 +102,18 @@ class ExecutionEngine(object):
 
         return True
 
+    def cycle_tasks(self):
+        """Cycle through the tasks and determine which tasks to execute
+
+        The mechanism allows for cycling through the task queue to determine
+        if the task is ready to execute or not. If the task is ready to execute
+        the execution method is called with the task_id to get the task to
+        execution state.
+        """
+
+        for task in self.task_queue.get_task_list():
+            if self.__check_ready_to_execute(task):
+                self.execute_task(task)
 
     def __check_ready_to_execute(self, task_id):
         """Check if the task is ready to execute or not
