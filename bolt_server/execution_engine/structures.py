@@ -96,6 +96,15 @@ class TaskQueue(object):
 
         return self.task_queue[task_id][0].get_task()
 
+    def get_task_list(self):
+        """Returns the list of tasks currently in the queue
+
+        Returns:
+            List
+        """
+
+        return self.task_queue.keys()
+
     def get_task_status(self, task_id):
         """Get the status of the current task
 
