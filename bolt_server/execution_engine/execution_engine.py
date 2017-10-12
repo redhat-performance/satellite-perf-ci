@@ -15,25 +15,27 @@ class ExecutionEngine(object):
     task queue.
     """
 
-    def __init__(self, message_dispatcher, execution_threads=3):
+    def __init__(self, message_dispatcher, plguin_loader, execution_threads=3):
         """Initialize the execution engine
 
         Keyword arguments:
         message_dispatcher -- The message dispatcher object
+        plugin_loader -- The plugin loader object to access the loaded plugins
         execution_threads -- The number of execution threads to run concurrently
                              for the task execution (Default: 3)
         """
 
         self.message_dispatcher = message_dispatcher
+        self.plugin_loader = plugin_loader
         self.execution_threads = execution_threads
         self.task_queue = TaskQueue()
 
-    def new_task(self, task_name, task_struct, task_params, task_topics, task_dependency=None):
+    def new_task(self, task_name, plugin_name, task_params, task_topics, task_dependency=None):
         """Create a new task and queue it inside the task queue
 
         Keyword arguments:
         task_name -- The name of the task to be created
-        task_struct -- The structure associated with the task
+        plugin_name -- The name of the plugin to be used for execution
         task_params -- The parameters associated with the task
         task_topics -- The topics to which the task should be broadcasted
         task_dependency -- The dependency tree for the task (Default: None)
@@ -42,7 +44,7 @@ class ExecutionEngine(object):
             task_id The task id of the current task
         """
 
-        task_id = self.task_queue.queue_task(task_name, task_struct, task_params, task_topics, task_dependency)
+        task_id = self.task_queue.queue_task(task_name, plugin_name, task_params, task_topics, task_dependency)
         return task_id
 
     def update_task(self, task_id, status):
@@ -61,6 +63,43 @@ class ExecutionEngine(object):
         except KeyError:
             return False
         return True
+
+    def execute_task(self, task_id):
+        """Execute the task on the provided topics
+
+        Keyword arguments:
+        task_id -- The id of the task to be executed
+
+        Returns:
+            Bool
+        """
+
+        try:
+            task = self.task_queue.get_task(task_id)
+        except KeyError:
+            return False
+
+        task_id = task[0]
+        task_name = task[1]
+        task_plugin = task[2]
+        task_params = task[3]
+        task_topics = task[4]
+
+        try:
+            plugin_structure = self.plugin_loader.get_plugin_structure(task_plugin)
+        except KeyError:
+            return False
+
+        if not self.message_dispatcher.message_exists(task_plugin):
+            self.message_dispatcher.register_message(task_plugin, plugin_structure, task_topics)
+
+        try:
+            message_id = self.message_dispatcher.send_message(task_plugin, task_topics)
+        except (KeyError, RuntimeError):
+            return False
+
+        return True
+
 
     def __check_ready_to_execute(self, task_id):
         """Check if the task is ready to execute or not
