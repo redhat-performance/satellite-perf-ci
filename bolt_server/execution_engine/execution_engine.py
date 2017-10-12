@@ -97,6 +97,8 @@ class ExecutionEngine(object):
 
         try:
             message_id = self.message_dispatcher.send_message(task_plugin, task_topics)
+            self.task_queue.change_task_status(task_id, self.task_queue.TASK_RUNNING)
+
         except (KeyError, RuntimeError):
             return False
 
