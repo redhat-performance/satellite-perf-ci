@@ -73,7 +73,7 @@ class TaskQueue(object):
             task_id The id of the task
         """
 
-        task = Task(task_name, task_struct, task_params, task_topics)
+        task = Task(task_name, plugin_name, task_params, task_topics)
         task_id = task.get_task_id()
         self.task_queue[task_id] = [task, self.TASK_QUEUED, task_dependency]
         return task_id
