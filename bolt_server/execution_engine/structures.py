@@ -10,19 +10,19 @@ import random
 class Task(object):
     """Create a new task which can encapsulate all the data objects"""
 
-    def __init__(self, task_name, task_struct, task_params, task_topics):
+    def __init__(self, task_name, plugin_name, task_params, task_topics):
         """Initialize the Task object
 
         Keyword arguments:
         task_name -- The name of the task to be executed
-        task_struct -- The structure of the task to be executed
+        plugin_name -- The name of the plugin which is to be called
         task_params -- The parameters to be passed to the task
         task_topics -- The topics to which the task should be executed on
         """
 
         self.task_name = task_name
         self.task_id = hashlib.md5(self.task_name + str(random.randint(1,25000))).hexdigest()
-        self.task_structure = task_struct
+        self.plugin_name = plugin_name
         self.task_params = task_params
         self.task_topics = task_topics
 
@@ -42,7 +42,7 @@ class Task(object):
             List
         """
 
-        return [self.task_id, self.task_name, self.task_structure, self.task_params, self.task_topics]
+        return [self.task_id, self.task_name, self.plugin_name, self.task_params, self.task_topics]
 
 class TaskQueue(object):
     """Create and queue a new task for execution"""
@@ -59,12 +59,12 @@ class TaskQueue(object):
 
         self.task_queue = {}
 
-    def queue_task(self, task_name, task_struct, task_params, task_topics, task_dependency=None):
+    def queue_task(self, task_name, plugin_name, task_params, task_topics, task_dependency=None):
         """Queue a new task
 
         Keyword arguments:
         task_name -- The name of the task
-        task_struct -- The task structure
+        plugin_name -- The name of the plugin to be used for message
         task_params -- The parameters to be passed to the task structure
         task_topic -- The topics the task should be broadcasted to
         task_dependency -- The tasks on which the current task depends
