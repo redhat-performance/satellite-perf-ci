@@ -32,7 +32,7 @@ class ExecutionEngine(object):
         self.execution_threads = execution_threads
         self.task_queue = TaskQueue()
         #Provide a strcuture to map the message id to task id
-        message_map = {}
+        self.message_map = {}
 
     def new_task(self, task_name, plugin_name, task_params, task_topics, task_dependency=None):
         """Create a new task and queue it inside the task queue
@@ -78,10 +78,10 @@ class ExecutionEngine(object):
             Bool
         """
 
-        try:
-            task = self.task_queue.get_task(task_id)
-        except KeyError:
-            return False
+        task = self.__resolve_task(task_id)
+
+        if task == False:
+            return
 
         task_id = task[0]
         task_name = task[1]
@@ -145,3 +145,45 @@ class ExecutionEngine(object):
                 return False
 
         return True
+
+    def __resolve_task(self, task_id):
+        """Retrieve the task information provided the task id
+
+        Keyword arguments:
+        task_id -- The task id whose task needs to be resolved
+        """
+
+        try:
+            task = self.task_queue.get_task(task_id)
+        except KeyError:
+            return False
+
+    def __handle_incoming_message(self, message):
+        """Handle the incoming message responses
+
+        Once the message has been sent, the clients can send status updates to
+        the bolt server through the message sending mechanism. This method
+        is responsible for handling the actions that needs to be taken once the
+        status update is received by the Execution Engine.
+
+        Keyword arguments:
+        message -- The incoming message dict
+        """
+
+        message_id = message['id']
+        message_payload = message['result']
+
+        #Resolve the task id from the incoming message
+        task_id = self.message_map[message_id]
+
+        #Resolve the task from task id
+        task = self.__resolve_task(task_id)
+
+        if task != False:
+            task_plugin = task[2]
+
+        #Resolve the plugin executor
+        plugin_executor = self.plugin_loader.get_plugin_executor(task_plugin)
+
+        #Forward the message to plugin executor along with the callback object
+        plugin_executor.handle(message_payload, self)
