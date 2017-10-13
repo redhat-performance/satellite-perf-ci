@@ -16,7 +16,7 @@ class SocketHandler(object):
     handling the socket connections
     """
 
-    def __init__(self, handler):
+    def __init__(self):
         """SocketHandler constructor object
 
         Initializes the required components for socket handling
@@ -29,7 +29,6 @@ class SocketHandler(object):
         self.host = os.getenv('BOLT_SERVER_HOST', '127.0.0.1')
         self.port = int(os.getenv('BOLT_SERVER_PORT', 5200))
         self.queue_size = os.getenv('BOLT_SERVER_CONNECTION_WAIT_QUEUE', 100)
-        self.message_handler = handler
         self.listen = True
         self.thread_pool = []
         self.server_thread = threading.Thread(target=self.__setup_socket_server)
@@ -76,6 +75,18 @@ class SocketHandler(object):
             if not message:
                 break
             self.handle(message)
+
+    def register_handler(self, message_handler):
+        """Register a new message handler
+
+        The message handler handles the incoming message requests and acts on
+        the incoming request
+
+        Keyword arguments:
+        message_handler -- The message handling object
+        """
+
+        self.message_handler = message_handler
 
     def handle(self, message):
         """Handle the incoming messages
