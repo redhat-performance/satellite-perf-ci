@@ -95,7 +95,7 @@ class SocketHandler(object):
         message -- The message to be processed
         """
 
-        print message
+        self.message_handler(message)
 
     def stop_listening(self):
         """Stop listening on the server so as to prepare for shutdown"""
