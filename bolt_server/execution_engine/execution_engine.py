@@ -34,6 +34,9 @@ class ExecutionEngine(object):
         #Provide a strcuture to map the message id to task id
         self.message_map = {}
 
+        #Register the execution engine message handler to message dispatcher
+        self.message_dispatcher.register_handler(self.__handle_incoming_message)
+
     def new_task(self, task_name, plugin_name, task_params, task_topics, task_dependency=None):
         """Create a new task and queue it inside the task queue
 
