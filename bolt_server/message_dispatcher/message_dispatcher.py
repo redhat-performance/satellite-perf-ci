@@ -45,7 +45,7 @@ class MessageDispatcher(object):
 
         try:
             self.message_store.get_message(message_name)
-        except RuntimeError:
+        except KeyError:
             return False
 
         return True

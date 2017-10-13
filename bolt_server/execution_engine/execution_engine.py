@@ -17,7 +17,7 @@ class ExecutionEngine(object):
     TODO: Add a multithreaded execution mechanism
     """
 
-    def __init__(self, message_dispatcher, plguin_loader, execution_threads=3):
+    def __init__(self, message_dispatcher, plugin_loader, execution_threads=3):
         """Initialize the execution engine
 
         Keyword arguments:
@@ -96,7 +96,7 @@ class ExecutionEngine(object):
             self.message_dispatcher.register_message(task_plugin, plugin_structure, task_topics)
 
         try:
-            message_id = self.message_dispatcher.send_message(task_plugin, task_topics)
+            message_id = self.message_dispatcher.send_message(task_plugin, task_params)
             self.task_queue.change_task_status(task_id, self.task_queue.TASK_RUNNING)
 
         except (KeyError, RuntimeError):
