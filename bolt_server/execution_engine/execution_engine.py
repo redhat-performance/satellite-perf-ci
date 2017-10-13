@@ -31,6 +31,8 @@ class ExecutionEngine(object):
         self.plugin_loader = plugin_loader
         self.execution_threads = execution_threads
         self.task_queue = TaskQueue()
+        #Provide a strcuture to map the message id to task id
+        message_map = {}
 
     def new_task(self, task_name, plugin_name, task_params, task_topics, task_dependency=None):
         """Create a new task and queue it inside the task queue
@@ -98,6 +100,7 @@ class ExecutionEngine(object):
         try:
             message_id = self.message_dispatcher.send_message(task_plugin, task_params)
             self.task_queue.change_task_status(task_id, self.task_queue.TASK_RUNNING)
+            self.message_map[message_id] = task_id
 
         except (KeyError, RuntimeError):
             return False
