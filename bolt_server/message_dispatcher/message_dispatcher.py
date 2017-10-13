@@ -148,5 +148,6 @@ class MessageDispatcher(object):
         message -- The incoming message object
         """
 
-        mid, result = message
+        mid = message['id']
+        result = message['result']
         self.message_queue.update_status(mid, 'Completed')
