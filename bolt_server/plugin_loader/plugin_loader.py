@@ -86,7 +86,7 @@ class PluginLoader(object):
             load_data = __import__(import_name, fromlist=['*'])
             name = module
             location = load_data.__file__
-            structure = getattr(load_data, 'Message')
+            structure = getattr(load_data, 'Message').structure
             main_class = getattr(load_data, module)
             plugin = Plugin(name, location, structure, main_class)
             self.plugins[name] = plugin
