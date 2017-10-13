@@ -33,6 +33,9 @@ class MessageDispatcher(object):
         #Initialize the Message Queue
         self.message_queue = MessageQueue()
 
+        #Register a message handler with Socket server
+        self.socket_server.register_handler(self.__generic_handler)
+
     def message_exists(self, message_name):
         """Check if the message exists or not
 
@@ -49,6 +52,15 @@ class MessageDispatcher(object):
             return False
 
         return True
+
+    def register_handler(self, handler):
+        """Register a new message handler with the socket server
+
+        Keyword arguments:
+        handler -- Message handling object
+        """
+
+        self.socket_server.register_handler(handler)
 
     def register_message(self, message_name, message_structure, message_topics):
         """Register a new message
@@ -125,3 +137,16 @@ class MessageDispatcher(object):
         """
 
         return self.message_store.get_message(message_name)
+
+    def __generic_handler(self, message):
+        """Generic message handler
+
+        Handles the incoming messages on a generic basis by printing them and
+        marking the message as completed.
+
+        Keyword arguments:
+        message -- The incoming message object
+        """
+
+        mid, result = message
+        self.message_queue.update_status(mid, 'Completed')
