@@ -160,6 +160,8 @@ class ExecutionEngine(object):
             task = self.task_queue.get_task(task_id)
         except KeyError:
             return False
+        
+        return task
 
     def __handle_incoming_message(self, message):
         """Handle the incoming message responses
