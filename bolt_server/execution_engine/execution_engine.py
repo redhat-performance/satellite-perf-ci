@@ -160,7 +160,7 @@ class ExecutionEngine(object):
             task = self.task_queue.get_task(task_id)
         except KeyError:
             return False
-        
+
         return task
 
     def __handle_incoming_message(self, message):
@@ -189,6 +189,7 @@ class ExecutionEngine(object):
 
         #Resolve the plugin executor
         plugin_executor = self.plugin_loader.get_plugin_executor(task_plugin)
+        plugin_executor_instance = plugin_executor()
 
         #Forward the message to plugin executor along with the callback object
-        plugin_executor.handle(message_payload, self)
+        plugin_executor_instance.handle(message_payload, self)
