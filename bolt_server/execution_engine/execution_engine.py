@@ -108,6 +108,7 @@ class ExecutionEngine(object):
         except (KeyError, RuntimeError):
             return False
 
+        self.message_dispatcher.unregister_message(task_plugin)
         return True
 
     def cycle_tasks(self):

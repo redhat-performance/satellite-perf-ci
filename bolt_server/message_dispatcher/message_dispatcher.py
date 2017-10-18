@@ -120,7 +120,7 @@ class MessageDispatcher(object):
                 mid, packet = message_packet.get_packet()
                 self.socket_server.send_message(topic, packet)
                 self.message_queue.queue(mid)
-                return mid
+            return mid
         except RuntimeError:
             raise RuntimeError("Unable to send the message across the topics")
             pass
